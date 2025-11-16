@@ -2,22 +2,24 @@ String formatRelativeTime(DateTime dateTime) {
   final now = DateTime.now();
   final difference = now.difference(dateTime);
 
-  if (difference.inSeconds < 60) {
-    return '${difference.inSeconds} s ago';
+  if (difference.inSeconds == 0) {
+    return 'Now';
+  } else if (difference.inSeconds < 60) {
+    return '${difference.inSeconds} seg ago';
   } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes} m ago';
+    return '${difference.inMinutes} min ago';
   } else if (difference.inHours < 24) {
-    return '${difference.inHours} h ago';
+    return '${difference.inHours} hours ago';
   } else if (difference.inDays < 7) {
-    return '${difference.inDays} d ago';
+    return '${difference.inDays} days ago';
   } else if (difference.inDays < 30) {
     final weeks = (difference.inDays / 7).floor();
-    return '$weeks w ago';
+    return '$weeks weeks ago';
   } else if (difference.inDays < 365) {
     final months = (difference.inDays / 30).floor();
-    return '$months mo ago';
+    return '$months months ago';
   } else {
     final years = (difference.inDays / 365).floor();
-    return '$years y ago';
+    return '$years years ago';
   }
 }

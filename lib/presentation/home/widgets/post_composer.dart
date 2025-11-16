@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PostComposer extends StatefulWidget {
-  final Function(String) onSubmit;
+  final Future<void> Function({required String text}) onSubmit;
 
   const PostComposer({
     super.key,
@@ -25,17 +25,18 @@ class _PostComposerState extends State<PostComposer> {
   void _handleSubmit() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
-      widget.onSubmit(text);
+      widget.onSubmit(text: text);
       _controller.clear();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -63,7 +64,7 @@ class _PostComposerState extends State<PostComposer> {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  counterText: '', // Hide character counter
+                  counterText: '',
                 ),
                 onSubmitted: (_) => _handleSubmit(),
               ),

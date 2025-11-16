@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import '../models/post.dart';
-import '../utils/time_formatter.dart';
+
+import '../../../domain/entities/post_entity.dart';
+import '../../../utils/time_formatter.dart';
 
 class PostCard extends StatelessWidget {
-  final Post post;
-
   const PostCard({
     super.key,
     required this.post,
   });
 
+  final PostEntity post;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       elevation: !post.hasSentToServer ? 0 : 1,
       color: !post.hasSentToServer
-          ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
+          ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
           : null,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -33,22 +35,22 @@ class PostCard extends StatelessWidget {
                       height: 12,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.5),
                       ),
                     ),
                   ),
                 Text(
                   formatRelativeTime(post.createdAt),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               post.text,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge,
             ),
           ],
         ),

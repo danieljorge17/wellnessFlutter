@@ -1,40 +1,33 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/post_bloc.dart';
-import 'bloc/post_event.dart';
-import 'bloc/post_state.dart';
+import 'bloc/home_cubit.dart';
+import 'bloc/home_state.dart';
 import 'widgets/post_composer.dart';
 import 'widgets/post_list.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wellness Feed'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: BlocBuilder<PostBloc, PostState>(
+      body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
+          final cubit = context.read<HomeCubit>();
           return Column(
             children: [
-              // Composer at the top
-              PostComposer(
-                onSubmit: (text) {
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    context.read<PostBloc>().add(
-                          AddPost(text: text, uid: user.uid),
-                        );
-                  }
-                },
-              ),
-              const Divider(height: 1),
-              // Feed below
               Expanded(
                 child: state.posts.isEmpty && !state.isLoading
                     ? const Center(
@@ -51,11 +44,14 @@ class HomeScreen extends StatelessWidget {
                         posts: state.posts,
                         isLoading: state.isLoading,
                         hasMore: state.hasMore,
-                        onLoadMore: () {
-                          context.read<PostBloc>().add(const LoadMorePosts());
-                        },
+                        onLoadMore: cubit.loadMorePosts,
                       ),
               ),
+              const Divider(height: 1),
+              PostComposer(
+                onSubmit: cubit.addPost,
+              ),
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 12),
             ],
           );
         },

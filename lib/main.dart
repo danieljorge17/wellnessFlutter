@@ -1,49 +1,33 @@
+import 'package:fe_testing_ta/app/app_dependencies.dart';
+import 'package:fe_testing_ta/app/app_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/post_bloc.dart';
-import 'bloc/post_event.dart';
-import 'firebase_options.dart';
-import 'home_screen.dart';
-import 'repositories/post_repository.dart';
+import 'app/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Silently sign in anonymously if no user is present
-  if (FirebaseAuth.instance.currentUser == null) {
-    try {
-      await FirebaseAuth.instance.signInAnonymously();
-    } catch (e) {
-      debugPrint('Failed to sign in anonymously: $e');
-    }
-  }
+  await AppDependencies.initializeDependencies();
+
+  await _logUser();
 
   runApp(const AppWidget());
 }
 
-class AppWidget extends StatelessWidget {
-  const AppWidget({super.key});
+Future<void> _logUser() async {
+  final firebaseAuth = getInstance<FirebaseAuth>();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Wellness Feed',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: BlocProvider(
-        create: (context) => PostBloc(
-          repository: PostRepository(),
-        )..add(const LoadPosts()),
-        child: const HomeScreen(),
-      ),
-    );
+  if (firebaseAuth.currentUser == null) {
+    try {
+      await firebaseAuth.signInAnonymously();
+    } catch (e) {
+      debugPrint('Failed to sign in anonymously: $e');
+    }
   }
 }

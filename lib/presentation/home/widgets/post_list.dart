@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/post.dart';
+
+import '../../../domain/entities/post_entity.dart';
 import 'post_card.dart';
 
 class PostList extends StatefulWidget {
-  final List<Post> posts;
+  final List<PostEntity> posts;
   final bool isLoading;
   final bool hasMore;
   final VoidCallback onLoadMore;
@@ -46,7 +47,7 @@ class _PostListState extends State<PostList> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9); // Trigger at 90% scroll
+    return currentScroll >= (maxScroll * 0.9);
   }
 
   @override
@@ -55,10 +56,8 @@ class _PostListState extends State<PostList> {
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: widget.posts.length + (widget.hasMore ? 1 : 0),
-      // Use itemBuilder for better performance - only builds visible items
       itemBuilder: (context, index) {
         if (index >= widget.posts.length) {
-          // Loading indicator at the bottom
           return const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(
@@ -68,7 +67,6 @@ class _PostListState extends State<PostList> {
         }
 
         final post = widget.posts[index];
-        // Use key to help Flutter identify items for efficient rebuilds
         return PostCard(
           key: ValueKey(post.id),
           post: post,
